@@ -29,14 +29,18 @@ loginfo('loading moltenprot fit params from : %s', params)
 loginfo('loading moltenprot baseline corrected from : %s', values)
 loginfo('loading platemap fit params from : %s', plate_map)
 
+source('./prepare_params.R')
 
-# NOTE this process creates spurious columns that should be removed
-full_param <- read_csv(params,
-show_col_types = FALSE
-)
-curve_df <- read_csv(values,
-show_col_types = FALSE
-)
+# full_param <- read_csv(params,
+# show_col_types = FALSE
+# )
+
+source('./prepare_values.R')
+
+# curve_df <- read_csv(values,
+# show_col_types = FALSE
+# )
+
 platemap_filepath = plate_map
 
 # Assign compound ids and concentration from platemap
