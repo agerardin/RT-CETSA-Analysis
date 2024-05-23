@@ -1,0 +1,38 @@
+[tool.poetry]
+name = "rt-cetsa"
+version = "0.2.0-dev0"
+description = ""
+authors = [
+    "Nick Schaub <nick.schaub@nih.gov>",
+    "Antoine Gerardin <antoine.gerardin@nih.gov>",
+    "Najib Ishaq <najib.ishaq@nih.gov>",
+]
+readme = "README.md"
+packages = [{include = "rt_cetsa", from = "src"}]
+
+[tool.poetry.dependencies]
+python = ">=3.10, <3.12"
+solara = "^1.32.2"
+numpy = "^1.26.4"
+markdown = "^3.6"
+tifffile = "^2024.5.10"
+matplotlib = "^3.8.4"
+filepattern = "^2.0.6"
+# polus-images-segmentation-rt-cetsa-plate-extraction = {path = "/Users/antoinegerardin/Documents/projects/polus-plugins/segmentation/rt-cetsa-plate-extraction-tool"}
+polus-images-segmentation-rt-cetsa-plate-extraction = {git = "https://github.com/agerardin/image-tools.git", branch = "feat/rt_cetsa", subdirectory = "segmentation/rt-cetsa-plate-extraction-tool"}
+
+# polus-images-features-rt-cetsa-intensity-extraction = {path = "/Users/antoinegerardin/Documents/projects/polus-plugins/features/rt-cetsa-intensity-extraction-tool"}
+polus-images-features-rt-cetsa-intensity-extraction = {git = "https://github.com/agerardin/image-tools.git", branch = "feat/rt_cetsa", subdirectory = "features/rt-cetsa-intensity-extraction-tool"}
+
+#polus-tabular-regression-rt-cetsa-moltenprot = {path = "/Users/antoinegerardin/Documents/projects/tabular-tools/regression/rt-cetsa-moltenprot-tool"}
+polus-tabular-regression-rt-cetsa-moltenprot = {git = "https://github.com/agerardin/tabular-tools.git", branch = "feat/rt_cetsa_tools", subdirectory = "regression/rt-cetsa-moltenprot-tool"}
+
+#polus-tabular-regression-rt-cetsa-analysis = {path = "/Users/antoinegerardin/Documents/projects/tabular-tools/regression/rt-cetsa-analysis-tool"}
+polus-tabular-regression-rt-cetsa-analysis = {git = "https://github.com/agerardin/tabular-tools.git", branch = "feat/rt_cetsa_tools", subdirectory = "regression/rt-cetsa-analysis-tool"}
+
+[tool.poetry.group.dev.dependencies]
+bump2version = "^1.0.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
