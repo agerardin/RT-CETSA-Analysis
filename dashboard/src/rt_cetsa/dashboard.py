@@ -21,6 +21,7 @@ import shutil
 from solara.lab import task
 import numpy as np
 
+from polus.tabular.transforms.rt_cetsa_metadata import preprocess_metadata
 from polus.images.segmentation.rt_cetsa_plate_extraction import extract_plates
 from polus.images.segmentation.rt_cetsa_plate_extraction.core import PlateParams, PLATE_DIMS
 from polus.images.features.rt_cetsa_intensity_extraction import alphanumeric_row, extract_signal
@@ -42,6 +43,8 @@ logger.setLevel(POLUS_LOG)
 
 DATA_DIR = Path("data")
 RAW_DIR = DATA_DIR / "raw"
+PREPROCESSED_DIR = DATA_DIR / "preprocessed"
+PREPROCESSED_IMG_DIR = PREPROCESSED_DIR / "images"
 PROCESSED_DIR = DATA_DIR / "processed"
 PROCESSED_IMG_DIR = PROCESSED_DIR / "images"
 PROCESSED_MASK_DIR = PROCESSED_DIR / "masks"
@@ -51,9 +54,10 @@ MOLTENPROT_OUTDIR = DATA_DIR / "moltenprot"
 ANALYSIS_OUTDIR = DATA_DIR / "analysis"
 METADATA_DIR = DATA_DIR / "metadata"
 
-PATTERN = "{index:d+}.tif"
-PROCESSED_IMG_PATTERN = "{index:d+}.ome.tiff"
+PATTERN = "{index:d+}_{temp:f+}.tif"
+PROCESSED_IMG_PATTERN = "{index:d+}_{temp:f+}.ome.tiff"
 
+CAMERA_DATA_FILE = PREPROCESSED_DIR / "camera_data.xlsx"
 PLATE_PARAMS_FILE = PROCESSED_PARAMS_DIR / "plate.json" # plate_parameters
 INTENSITIES_FILE = INTENSITY_EXTRACTION_OUTDIR / "plate.csv" # intensities for a plate
 MOLTENPROT_PARAMS_FILE = MOLTENPROT_OUTDIR / "params.csv"
@@ -63,6 +67,8 @@ METADATA_FILE = METADATA_DIR / "platemap.xlsx"
 
 DATA_DIR.mkdir(exist_ok=True)
 RAW_DIR.mkdir(exist_ok=True)
+PREPROCESSED_DIR.mkdir(exist_ok=True)
+PREPROCESSED_IMG_DIR.mkdir(exist_ok=True)
 PROCESSED_DIR.mkdir(exist_ok=True)
 PROCESSED_IMG_DIR.mkdir(exist_ok=True)
 PROCESSED_MASK_DIR.mkdir(exist_ok=True)
@@ -84,6 +90,8 @@ class State:
     
     """
     raw_images: list[Path]
+    camera_data: Path
+    preprocessed_img_files: list[Path]
     img_files: list[Path]
     mask_file: Path
     intensities_df: pd.DataFrame | None
@@ -101,7 +109,8 @@ class State:
     status_step4: str
     status_step5: str 
     upload_progress: float | bool = False
-    platemap_upload_progress: float = False
+    platemap_upload_progress: float | bool = False
+    camera_upload_progress: float | bool = False
 
 
 @task
@@ -162,7 +171,9 @@ async def extract_intensities(state: solara.Reactive[State]):
     state.value = replace(state.value, status_step3=f"Computing well intensities...")
 
     if not PLATE_PARAMS_FILE.exists() or len(state.value.img_files) == 0:
-        raise ValueError("Error: please repreprocess plate images...") 
+        raise ValueError("Error: please crop and rotate plate images...") 
+    
+    print(state.value.img_files)
     
     df = extract_signal(state.value.img_files, PLATE_PARAMS_FILE)
 
@@ -180,19 +191,30 @@ async def extract_intensities(state: solara.Reactive[State]):
     )
 
 @task
-async def extract_plate_params(state: solara.Reactive[State]):
-    state.value = replace(state.value, status_step2=f"Extracting plates...")
-    
+async def preprocess_images(state: solara.Reactive[State]):
+    logger.info("preprocessing images...")
+    state.value = replace(state.value, status_step2=f"Preprocessing images...")
     if not RAW_DIR.exists():
         raise FileNotFoundError("Error: please reupload plate images...") 
     
-    extract_plates(RAW_DIR, PATTERN, PROCESSED_DIR)
+    preprocess_metadata(CAMERA_DATA_FILE, RAW_DIR, PREPROCESSED_DIR)
 
-    # NOTE hardcoded filepattern
-    fp = filepattern.FilePattern(PROCESSED_IMG_DIR, PROCESSED_IMG_PATTERN)
-    sorted_fp = sorted(fp, key=lambda f: f[0]["index"])
-    img_files: list[Path] = [f[1][0] for f in sorted_fp]
+    state.value = replace(
+        state.value,
+        preprocessed_img_files = list(PREPROCESSED_IMG_DIR.iterdir()),
+        status_step2=f"Images preprocessed."
+    )
 
+@task
+async def extract_plate_params(state: solara.Reactive[State]):
+    state.value = replace(state.value, status_step2=f"Extracting plates...")
+    
+    if not PREPROCESSED_IMG_DIR.exists():
+        raise FileNotFoundError("Error: please preprocess images...") 
+    
+    extract_plates(PREPROCESSED_IMG_DIR, PATTERN, PROCESSED_DIR)
+
+    fps = filepattern.FilePattern(PROCESSED_IMG_DIR, PROCESSED_IMG_PATTERN)
     mask_file = next(PROCESSED_MASK_DIR.iterdir())
 
     with PLATE_PARAMS_FILE.open("r") as f:
@@ -200,7 +222,7 @@ async def extract_plate_params(state: solara.Reactive[State]):
 
     state.value = replace(
         state.value,
-        img_files=img_files,
+        img_files=fps,
         mask_file=mask_file,
         params=params,
         plate_index = 1,
@@ -355,7 +377,7 @@ def upload(files: list[FileInfo], state: solara.Reactive[State], upload_progress
             save_image(filename, content, state, save_progress)
             current_file_index += 1
 
-        raw_images = sorted(list(RAW_DIR.iterdir()), key=lambda f: int(f.stem))
+        raw_images = list(RAW_DIR.iterdir())
         state.value = replace(state.value,raw_images= raw_images ,status_step1=f"Done uploading images...")
         upload_progress.value = False
         logger.info(f"Done uploading images...")
@@ -368,6 +390,17 @@ def upload_plate_params(file: FileInfo, state: solara.Reactive[State], upload_pr
         f.write(file["data"])
         logger.info("Platemap uploaded successfully.")
         state.value = replace(state.value, platemap= METADATA_FILE.resolve() , status_step5="Platemap uploaded successfully.")
+
+def upload_camera_data(file: FileInfo, state: solara.Reactive[State], upload_progress: solara.lab.Ref):
+    if not file['name'].endswith(".xlsx"):
+        state.value = replace(state.value, status_step2="Uploading error. Not a xlsx file.")
+        return
+    with CAMERA_DATA_FILE.open("wb") as f:
+        f.write(file["data"])
+        logger.info("Camera data uploaded successfully.")
+        state.value = replace(state.value, camera_data= CAMERA_DATA_FILE.resolve() , status_step2="Camera data uploaded successfully.")
+
+
 
 @solara.component
 def DeleteStepData(state: solara.Reactive[State], step_index: int):
@@ -418,10 +451,15 @@ def delete_all_data(state: solara.Reactive[State], step_index: int):
 def init_state():
     """Set up state when dashboad is loaded."""
     #step1
-    raw_images = sorted(list(RAW_DIR.iterdir()), key=lambda f: int(f.stem))
+    raw_images = list(RAW_DIR.iterdir())
 
     #step2
-    img_files = sorted(list(PROCESSED_IMG_DIR.iterdir()), key=lambda f: int(f.with_suffix("").stem))
+    # sort = lambda f : f.with_suffix("").stem.split("_")
+    fp = filepattern.FilePattern(PREPROCESSED_IMG_DIR, PROCESSED_IMG_PATTERN)
+    sorted_fp = sorted(fp, key=lambda f: f[0]["index"])
+    preprocessed_img_files: list[Path] = [f[1][0] for f in sorted_fp]
+
+    img_files = filepattern.FilePattern(PROCESSED_IMG_DIR, PROCESSED_IMG_PATTERN)
     mask_file = None
     masks = list(PROCESSED_MASK_DIR.iterdir())
     if len(masks) == 1:
@@ -430,6 +468,9 @@ def init_state():
     if PLATE_PARAMS_FILE.exists():
         with PLATE_PARAMS_FILE.open("r") as f:
             params = PlateParams(**from_json(f.read()))
+    camera_data = None
+    if CAMERA_DATA_FILE.exists():
+        camera_data = CAMERA_DATA_FILE.resolve()
 
     #step3
     intensities_df = None
@@ -460,6 +501,7 @@ def init_state():
 
     return State(
         raw_images = raw_images,
+        preprocessed_img_files = preprocessed_img_files,
         img_files = img_files,
         mask_file = mask_file,
         plate_index=None,
@@ -471,6 +513,7 @@ def init_state():
         values_df= values_df,
         signif_df = signif_df,
         platemap = platemap,
+        camera_data = camera_data,
         status_step1 = status_step1,
         status_step2 = status_step2,
         status_step3 = status_step3,
@@ -487,6 +530,7 @@ def Page():
     # NOTE Use that mechanism or update global state directly
     upload_progress = Ref(state.fields.upload_progress)
     platemap_upload_progress = Ref(state.fields.platemap_upload_progress)
+    camera_upload_progress = Ref(state.fields.camera_upload_progress)
     plate_display = Ref(state.fields.plate_display)
 
     show_step1 : bool = True
@@ -546,6 +590,29 @@ def Page():
                     * NOTE : The tool currently expects all image names to be a numerically ordered sequence (ex: 1.tif, 2.tif, 11.tif etc...)
                     * Image and detected wells are displayed for sanity check.
                     ''')
+                with solara.Card(title="Step 2.1: Preprocess data"):
+                    solara.Markdown("")
+                    solara.FileDrop(
+                        label="Drag and drop a the camera data file.",
+                        on_file=partial(upload_camera_data, state=state, upload_progress=camera_upload_progress),
+                        lazy=False,
+                        on_total_progress=camera_upload_progress.set
+                    )
+                    solara.ProgressLinear(camera_upload_progress.value)
+                    solara.ProgressLinear(preprocess_images.pending)
+                    
+                    with solara.CardActions():
+                        with solara.Row(gap="2px", margin="2px", justify="center"):
+                            solara.Button(
+                                label="Preprocess images",
+                                on_click=partial(preprocess_images,state),
+                            )
+                            DeleteStepData(state=state, step_index=2)
+
+                    if preprocess_images.error:
+                        state.value = replace(state.value, status_step2=str(preprocess_images.exception))
+
+
                 with solara.Card(title="Step 2: Preview data"):
                     
                     solara.Markdown(state.value.status_step2)

@@ -18,11 +18,14 @@ markdown = "^3.6"
 tifffile = "^2024.5.10"
 matplotlib = "^3.8.4"
 filepattern = "^2.0.6"
+
+polus_tabular_transforms_rt_cetsa_metadata = {path = "/Users/antoinegerardin/Documents/projects/tabular-tools/transforms/rt-cetsa-metadata-tool"}
+
 # polus-images-segmentation-rt-cetsa-plate-extraction = {path = "/Users/antoinegerardin/Documents/projects/polus-plugins/segmentation/rt-cetsa-plate-extraction-tool"}
-polus-images-segmentation-rt-cetsa-plate-extraction = {git = "https://github.com/agerardin/image-tools.git", branch = "feat/rt_cetsa", subdirectory = "segmentation/rt-cetsa-plate-extraction-tool"}
+polus-images-segmentation-rt-cetsa-plate-extraction = {git = "https://github.com/agerardin/image-tools.git", branch = "feat/rt_cetsa_new_data", subdirectory = "segmentation/rt-cetsa-plate-extraction-tool"}
 
 # polus-images-features-rt-cetsa-intensity-extraction = {path = "/Users/antoinegerardin/Documents/projects/polus-plugins/features/rt-cetsa-intensity-extraction-tool"}
-polus-images-features-rt-cetsa-intensity-extraction = {git = "https://github.com/agerardin/image-tools.git", branch = "feat/rt_cetsa", subdirectory = "features/rt-cetsa-intensity-extraction-tool"}
+polus-images-features-rt-cetsa-intensity-extraction = {git = "https://github.com/agerardin/image-tools.git", branch = "feat/rt_cetsa_new_data", subdirectory = "features/rt-cetsa-intensity-extraction-tool"}
 
 #polus-tabular-regression-rt-cetsa-moltenprot = {path = "/Users/antoinegerardin/Documents/projects/tabular-tools/regression/rt-cetsa-moltenprot-tool"}
 polus-tabular-regression-rt-cetsa-moltenprot = {git = "https://github.com/agerardin/tabular-tools.git", branch = "feat/rt_cetsa_tools", subdirectory = "regression/rt-cetsa-moltenprot-tool"}
