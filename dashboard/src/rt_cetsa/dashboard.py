@@ -173,9 +173,8 @@ async def extract_intensities(state: solara.Reactive[State]):
     if not PLATE_PARAMS_FILE.exists() or len(state.value.img_files) == 0:
         raise ValueError("Error: please crop and rotate plate images...") 
     
-    print(state.value.img_files)
-    
-    df = extract_signal(state.value.img_files, PLATE_PARAMS_FILE)
+    fps = filepattern.FilePattern(PROCESSED_IMG_DIR, PROCESSED_IMG_PATTERN)
+    df = extract_signal(fps, PLATE_PARAMS_FILE)
 
     # TODO needed to avoid strange behavior from pandas where df loading 
     # from disk is structured differently that the one returned by the tool.
@@ -214,7 +213,10 @@ async def extract_plate_params(state: solara.Reactive[State]):
     
     extract_plates(PREPROCESSED_IMG_DIR, PATTERN, PROCESSED_DIR)
 
-    fps = filepattern.FilePattern(PROCESSED_IMG_DIR, PROCESSED_IMG_PATTERN)
+    fp = filepattern.FilePattern(PROCESSED_IMG_DIR, PROCESSED_IMG_PATTERN)
+    sorted_fp = sorted(fp, key=lambda f: f[0]["index"])
+    img_files: list[Path] = [f[1][0] for f in sorted_fp]
+
     mask_file = next(PROCESSED_MASK_DIR.iterdir())
 
     with PLATE_PARAMS_FILE.open("r") as f:
@@ -222,7 +224,7 @@ async def extract_plate_params(state: solara.Reactive[State]):
 
     state.value = replace(
         state.value,
-        img_files=fps,
+        img_files=img_files,
         mask_file=mask_file,
         params=params,
         plate_index = 1,
@@ -459,7 +461,9 @@ def init_state():
     sorted_fp = sorted(fp, key=lambda f: f[0]["index"])
     preprocessed_img_files: list[Path] = [f[1][0] for f in sorted_fp]
 
-    img_files = filepattern.FilePattern(PROCESSED_IMG_DIR, PROCESSED_IMG_PATTERN)
+    fp = filepattern.FilePattern(PROCESSED_IMG_DIR, PROCESSED_IMG_PATTERN)
+    sorted_fp = sorted(fp, key=lambda f: f[0]["index"])
+    img_files: list[Path] = [f[1][0] for f in sorted_fp]
     mask_file = None
     masks = list(PROCESSED_MASK_DIR.iterdir())
     if len(masks) == 1:
