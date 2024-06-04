@@ -95,6 +95,7 @@ class State:
     img_files: list[Path]
     mask_file: Path
     intensities_df: pd.DataFrame | None
+    moltenprot_fit_params: dict[str, int]
     params_df: pd.DataFrame | None
     values_df: pd.DataFrame | None
     signif_df: pd.DataFrame | None
@@ -105,6 +106,7 @@ class State:
     params: PlateParams | None
     status_step1: str
     status_step2: str
+    status_step2_1: str
     status_step3: str
     status_step4: str
     status_step5: str 
@@ -138,6 +140,11 @@ async def run_analysis(state: solara.Reactive[State]):
             status_step5=f"Analysis completed."
         )
 
+def update_moltenprot_params(state: solara.Reactive[State] , param: str, value: int):
+    params = {**state.value.moltenprot_fit_params, param: value}
+    state.value = replace(state.value, moltenprot_fit_params=params)
+    logger.info(f" {param} moltenprot params updated to: {value}")
+
 @task
 async def run_moltenprot(state: solara.Reactive[State]):
     """Run the Moltenprot tool."""
@@ -146,7 +153,7 @@ async def run_moltenprot(state: solara.Reactive[State]):
     if not INTENSITIES_FILE.exists() :
         raise FileNotFoundError("Error: please recompute intensities...")
 
-    fit_params, fit_curves = run_moltenprot_fit(INTENSITIES_FILE)
+    fit_params, fit_curves = run_moltenprot_fit(INTENSITIES_FILE, state.value.moltenprot_fit_params)
     fit_params_path = MOLTENPROT_PARAMS_FILE
     fit_curves_path = MOLTENPROT_VALUES_FILE
 
@@ -192,7 +199,7 @@ async def extract_intensities(state: solara.Reactive[State]):
 @task
 async def preprocess_images(state: solara.Reactive[State]):
     logger.info("preprocessing images...")
-    state.value = replace(state.value, status_step2=f"Preprocessing images...")
+    state.value = replace(state.value, status_step2_1=f"Preprocessing images...")
     if not RAW_DIR.exists():
         raise FileNotFoundError("Error: please reupload plate images...") 
     
@@ -201,7 +208,7 @@ async def preprocess_images(state: solara.Reactive[State]):
     state.value = replace(
         state.value,
         preprocessed_img_files = list(PREPROCESSED_IMG_DIR.iterdir()),
-        status_step2=f"Images preprocessed."
+        status_step2_1=f"Images preprocessed."
     )
 
 @task
@@ -395,12 +402,12 @@ def upload_plate_params(file: FileInfo, state: solara.Reactive[State], upload_pr
 
 def upload_camera_data(file: FileInfo, state: solara.Reactive[State], upload_progress: solara.lab.Ref):
     if not file['name'].endswith(".xlsx"):
-        state.value = replace(state.value, status_step2="Uploading error. Not a xlsx file.")
+        state.value = replace(state.value, status_step2_1="Uploading error. Not a xlsx file.")
         return
     with CAMERA_DATA_FILE.open("wb") as f:
         f.write(file["data"])
         logger.info("Camera data uploaded successfully.")
-        state.value = replace(state.value, camera_data= CAMERA_DATA_FILE.resolve() , status_step2="Camera data uploaded successfully.")
+        state.value = replace(state.value, camera_data= CAMERA_DATA_FILE.resolve() , status_step2_1="Camera data uploaded successfully.")
 
 
 
@@ -482,6 +489,13 @@ def init_state():
         intensities_df = pd.read_csv(INTENSITIES_FILE)
 
     #step4
+    moltenprot_fit_params = {
+        "savgol": 10,
+        "trim_max": 0,
+        "trim_min": 0,
+        "baseline_fit": 3,
+        "baseline_bounds": 3,
+    }
     params_df = None
     if MOLTENPROT_PARAMS_FILE.exists():
         params_df = pd.read_csv(MOLTENPROT_PARAMS_FILE)
@@ -498,6 +512,7 @@ def init_state():
         platemap = METADATA_FILE.resolve()
 
     status_step1: str = "" if raw_images else "please upload some data..."
+    status_step2_1: str = "" if camera_data else "Please drag and drop the camera data file."
     status_step2: str = ""
     status_step3: str = "" 
     status_step4: str = ""
@@ -513,6 +528,7 @@ def init_state():
         plot_display=None,
         params= params,
         intensities_df = intensities_df,
+        moltenprot_fit_params = moltenprot_fit_params,
         params_df = params_df,
         values_df= values_df,
         signif_df = signif_df,
@@ -520,6 +536,7 @@ def init_state():
         camera_data = camera_data,
         status_step1 = status_step1,
         status_step2 = status_step2,
+        status_step2_1 = status_step2_1,
         status_step3 = status_step3,
         status_step4 = status_step4,
         status_step5 = status_step5,
@@ -595,9 +612,9 @@ def Page():
                     * Image and detected wells are displayed for sanity check.
                     ''')
                 with solara.Card(title="Step 2.1: Preprocess data"):
-                    solara.Markdown("")
+                    solara.Markdown(state.value.status_step2_1)
                     solara.FileDrop(
-                        label="Drag and drop a the camera data file.",
+                        label="Drag and drop camera data file.",
                         on_file=partial(upload_camera_data, state=state, upload_progress=camera_upload_progress),
                         lazy=False,
                         on_total_progress=camera_upload_progress.set
@@ -614,7 +631,7 @@ def Page():
                             DeleteStepData(state=state, step_index=2)
 
                     if preprocess_images.error:
-                        state.value = replace(state.value, status_step2=str(preprocess_images.exception))
+                        state.value = replace(state.value, status_step2_1=str(preprocess_images.exception))
 
 
                 with solara.Card(title="Step 2: Preview data"):
@@ -676,6 +693,32 @@ def Page():
                     solara.Markdown(r'''
                         * Run moltenprot and extract model parameters.
                         ''')
+                    with solara.Row(gap="2px", margin="2px", justify="center"):
+                        solara.InputInt(
+                            label="trim_min",
+                            value=state.value.moltenprot_fit_params['trim_min'],
+                            on_value=partial(update_moltenprot_params, state, "trim_min")
+                        )
+                        solara.InputInt(
+                            label="trim_max",
+                            value=state.value.moltenprot_fit_params['trim_max'],
+                            on_value=partial(update_moltenprot_params, state, "trim_max")
+                        )
+                        solara.InputInt(
+                            label="trim_min",
+                            value=state.value.moltenprot_fit_params['savgol'],
+                            on_value=partial(update_moltenprot_params, state, "savgol")
+                        )
+                        solara.InputInt(
+                            label="baseline_fit",
+                            value=state.value.moltenprot_fit_params['baseline_fit'],
+                            on_value=partial(update_moltenprot_params, state, "baseline_fit")
+                        )
+                        solara.InputInt(
+                            label="baseline_bounds",
+                            value=state.value.moltenprot_fit_params['baseline_bounds'],
+                            on_value=partial(update_moltenprot_params, state, "baseline_bounds")
+                        )
                     
                     solara.Markdown(state.value.status_step4)
                     solara.ProgressLinear(run_moltenprot.pending)
