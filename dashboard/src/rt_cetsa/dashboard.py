@@ -27,6 +27,7 @@ from polus.images.segmentation.rt_cetsa_plate_extraction.core import PlateParams
 from polus.images.features.rt_cetsa_intensity_extraction import alphanumeric_row, extract_signal
 from polus.tabular.regression.rt_cetsa_moltenprot import run_moltenprot_fit
 from polus.tabular.regression.rt_cetsa_analysis.run_rscript import run_rscript
+from polus.tabular.regression.rt_cetsa_analysis.preprocess_data import preprocess_data as analysis_preprocess_data
 import logging
 import os
 
@@ -125,10 +126,15 @@ async def run_analysis(state: solara.Reactive[State]):
     if not METADATA_FILE.exists():
         raise FileNotFoundError("Error: please reupload platemap...")
 
-    run_rscript(
-        MOLTENPROT_PARAMS_FILE.resolve(),
-        MOLTENPROT_VALUES_FILE.resolve(),
+    ANALYSIS_INPUT_PATH = analysis_preprocess_data(
         METADATA_FILE.resolve(),
+        MOLTENPROT_VALUES_FILE.resolve(),
+        MOLTENPROT_PARAMS_FILE.resolve(),
+        ANALYSIS_OUTDIR.resolve()
+        )
+
+    run_rscript(
+        ANALYSIS_INPUT_PATH.resolve(),
         ANALYSIS_OUTDIR.resolve()
     )
     

@@ -1828,14 +1828,16 @@ files = []
 develop = false
 
 [package.dependencies]
+numpy = "^1.26.4"
 openpyxl = "^3.1.3"
+pandas = "^2.2.2"
 typer = "^0.7"
 
 [package.source]
 type = "git"
 url = "https://github.com/agerardin/tabular-tools.git"
 reference = "feat/rt_cetsa_new_data"
-resolved_reference = "d5829201fa19019abb26b3147d8e7f95654a6395"
+resolved_reference = "d5e6256d3e2802aac0f6cca5d07191e20f5cbf57"
 subdirectory = "regression/rt-cetsa-analysis-tool"
 
 [[package]]
@@ -1858,7 +1860,7 @@ typer = "^0.7.0"
 type = "git"
 url = "https://github.com/agerardin/tabular-tools.git"
 reference = "feat/rt_cetsa_new_data"
-resolved_reference = "d5829201fa19019abb26b3147d8e7f95654a6395"
+resolved_reference = "d5e6256d3e2802aac0f6cca5d07191e20f5cbf57"
 subdirectory = "regression/rt-cetsa-moltenprot-tool"
 
 [[package]]
@@ -1880,7 +1882,7 @@ typer = "^0.7.0"
 type = "git"
 url = "https://github.com/agerardin/tabular-tools.git"
 reference = "feat/rt_cetsa_new_data"
-resolved_reference = "d5829201fa19019abb26b3147d8e7f95654a6395"
+resolved_reference = "d5e6256d3e2802aac0f6cca5d07191e20f5cbf57"
 subdirectory = "transforms/rt-cetsa-metadata-tool"
 
 [[package]]
