@@ -1,0 +1,9 @@
+# configure the solara proxy
+# user : NIH username
+# server_name : name of the notebookhub's server
+JUPYTERHUB_SERVICE_PREFIX = /user/{user}@nih.gov/{server_name}
+SOLARA_SERVICE_PREFIX=${JUPYTERHUB_SERVICE_PREFIX}/proxy/8765
+SOLARA_ROOT_PATH=${SOLARA_SERVICE_PREFIX}
+
+# path to the dashboard
+SOLARA_APP=src/rt_cetsa/dashboard.py
