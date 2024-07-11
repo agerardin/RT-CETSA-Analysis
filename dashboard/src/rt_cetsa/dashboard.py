@@ -33,6 +33,8 @@ import os
 
 # get env
 POLUS_LOG = os.environ.get("POLUS_LOG", logging.INFO)
+DATA_DIR = Path(os.environ.get("DATA_DIR", "data"))
+
 
 # Initialize the logger
 logging.basicConfig(
@@ -42,7 +44,6 @@ logging.basicConfig(
 logger = logging.getLogger("rt_cetsa_analysis")
 logger.setLevel(POLUS_LOG)
 
-DATA_DIR = Path("data")
 RAW_DIR = DATA_DIR / "raw"
 PREPROCESSED_DIR = DATA_DIR / "preprocessed"
 PREPROCESSED_IMG_DIR = PREPROCESSED_DIR / "images"
