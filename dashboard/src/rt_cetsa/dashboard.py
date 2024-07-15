@@ -21,7 +21,7 @@ import shutil
 from solara.lab import task
 import numpy as np
 
-from polus.tabular.transforms.rt_cetsa_metadata import preprocess_metadata
+from polus.tabular.transforms.rt_cetsa_metadata import preprocess_metadata, preprocess_from_range
 from polus.images.segmentation.rt_cetsa_plate_extraction import extract_plates
 from polus.images.segmentation.rt_cetsa_plate_extraction.core import PlateParams, PLATE_DIMS
 from polus.images.features.rt_cetsa_intensity_extraction import alphanumeric_row, extract_signal
@@ -33,7 +33,7 @@ import os
 
 # get env
 POLUS_LOG = os.environ.get("POLUS_LOG", logging.INFO)
-DATA_DIR = Path(os.environ.get("DATA_DIR", "data"))
+DATA_DIR = Path(os.environ.get("DATA_DIR", "data")).resolve()
 
 
 # Initialize the logger
@@ -62,7 +62,7 @@ PROCESSED_IMG_PATTERN = "{index:d+}_{temp:f+}.ome.tiff"
 CAMERA_DATA_FILE = PREPROCESSED_DIR / "camera_data.xlsx"
 PLATE_PARAMS_FILE = PROCESSED_PARAMS_DIR / "plate.json" # plate_parameters
 INTENSITIES_FILE = INTENSITY_EXTRACTION_OUTDIR / "plate.csv" # intensities for a plate
-MOLTENPROT_PARAMS_FILE = MOLTENPROT_OUTDIR / "params.csv"
+MOLTENPROT_PARAMS_FILE =    MOLTENPROT_OUTDIR / "params.csv"
 MOLTENPROT_VALUES_FILE = MOLTENPROT_OUTDIR / "values.csv"
 ANALYSIS_SIGNIF_FILE = ANALYSIS_OUTDIR / "signif_df.csv"
 METADATA_FILE = METADATA_DIR / "platemap.xlsx"
@@ -98,6 +98,8 @@ class State:
     mask_file: Path
     intensities_df: pd.DataFrame | None
     moltenprot_fit_params: dict[str, int]
+    range_temp: tuple[float,float]
+    use_range_temp: bool
     params_df: pd.DataFrame | None
     values_df: pd.DataFrame | None
     signif_df: pd.DataFrame | None
@@ -151,6 +153,20 @@ def update_moltenprot_params(state: solara.Reactive[State] , param: str, value: 
     params = {**state.value.moltenprot_fit_params, param: value}
     state.value = replace(state.value, moltenprot_fit_params=params)
     logger.info(f" {param} moltenprot params updated to: {value}")
+
+def update_range_min_temp(state: solara.Reactive[State] , value: int):
+    updated_range_temp = (value, state.value.range_temp[1])
+    state.value = replace(state.value, range_temp = updated_range_temp)
+    logger.info(f"updated range min temp to {value}")
+
+def update_range_max_temp(state: solara.Reactive[State] , value: int):
+    updated_range_temp = (state.value.range_temp[0], value)
+    state.value = replace(state.value, range_temp = updated_range_temp)
+    logger.info(f"updated range max temp to {value}")
+
+def update_use_range_temp(state: solara.Reactive[State] , value: bool): 
+    state.value = replace(state.value, use_range_temp = value)
+    logger.info(f"use range temp : {value}")
 
 @task
 async def run_moltenprot(state: solara.Reactive[State]):
@@ -210,7 +226,10 @@ async def preprocess_images(state: solara.Reactive[State]):
     if not RAW_DIR.exists():
         raise FileNotFoundError("Error: please reupload plate images...") 
     
-    preprocess_metadata(CAMERA_DATA_FILE, RAW_DIR, PREPROCESSED_DIR)
+    if state.value.use_range_temp:
+        preprocess_from_range(RAW_DIR, PREPROCESSED_DIR, state.value.range_temp)
+    else:
+        preprocess_metadata(RAW_DIR, PREPROCESSED_DIR, metadata_file=CAMERA_DATA_FILE)
 
     state.value = replace(
         state.value,
@@ -444,9 +463,13 @@ def delete_all_data(state: solara.Reactive[State], step_index: int):
             state.value = replace(state.value, status_step1=f"All files have been deleted.")
     if step_index <= 2:
             logger.info(f"delete 2...")
+            shutil.rmtree(PREPROCESSED_IMG_DIR)
+            shutil.rmtree(PREPROCESSED_DIR)
             shutil.rmtree(PROCESSED_IMG_DIR)
             shutil.rmtree(PROCESSED_MASK_DIR)
             shutil.rmtree(PROCESSED_PARAMS_DIR)
+            PREPROCESSED_DIR.mkdir()
+            PREPROCESSED_IMG_DIR.mkdir()
             PROCESSED_IMG_DIR.mkdir()
             PROCESSED_MASK_DIR.mkdir()
             PROCESSED_PARAMS_DIR.mkdir()
@@ -489,6 +512,9 @@ def init_state():
     camera_data = None
     if CAMERA_DATA_FILE.exists():
         camera_data = CAMERA_DATA_FILE.resolve()
+    
+    range_temp = (37,90)
+    use_range_temp = False
 
     #step3
     intensities_df = None
@@ -536,6 +562,8 @@ def init_state():
         params= params,
         intensities_df = intensities_df,
         moltenprot_fit_params = moltenprot_fit_params,
+        range_temp = range_temp,
+        use_range_temp = use_range_temp,
         params_df = params_df,
         values_df= values_df,
         signif_df = signif_df,
@@ -626,6 +654,19 @@ def Page():
                         lazy=False,
                         on_total_progress=camera_upload_progress.set
                     )
+                    solara.Markdown("OR")
+                    solara.Checkbox(label="Use Temp Range", value=state.value.use_range_temp , on_value=partial(update_use_range_temp,state))
+                    with solara.Row(gap="2px", margin="2px", justify="center"):
+                        solara.InputFloat(
+                            label="min_temp",
+                            disabled=not state.value.use_range_temp,
+                            value=state.value.range_temp[0],
+                            on_value=partial(update_range_min_temp, state))
+                        solara.InputFloat(
+                            label="max_temp",
+                            disabled=not state.value.use_range_temp,
+                            value=state.value.range_temp[1],
+                            on_value=partial(update_range_max_temp, state))
                     solara.ProgressLinear(camera_upload_progress.value)
                     solara.ProgressLinear(preprocess_images.pending)
                     
@@ -712,7 +753,7 @@ def Page():
                             on_value=partial(update_moltenprot_params, state, "trim_max")
                         )
                         solara.InputInt(
-                            label="trim_min",
+                            label="savgol",
                             value=state.value.moltenprot_fit_params['savgol'],
                             on_value=partial(update_moltenprot_params, state, "savgol")
                         )
