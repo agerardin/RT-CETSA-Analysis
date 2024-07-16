@@ -485,13 +485,13 @@ files = [
 
 [[package]]
 name = "exceptiongroup"
-version = "1.2.1"
+version = "1.2.2"
 description = "Backport of PEP 654 (exception groups)"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "exceptiongroup-1.2.1-py3-none-any.whl", hash = "sha256:5258b9ed329c5bbdd31a309f53cbfb0b155341807f6ff7606a1e801a891b29ad"},
-    {file = "exceptiongroup-1.2.1.tar.gz", hash = "sha256:a4785e48b045528f5bfe627b6ad554ff32def154f42372786903b7abcfe1aa16"},
+    {file = "exceptiongroup-1.2.2-py3-none-any.whl", hash = "sha256:3111b9d131c238bec2f8f516e123e14ba243563fb135d3fe885990585aa7795b"},
+    {file = "exceptiongroup-1.2.2.tar.gz", hash = "sha256:47c2edf7c6738fafb49fd34290706d1a1a2f4d1c6df275526b62cbb4aa5393cc"},
 ]
 
 [package.extras]
@@ -1433,43 +1433,36 @@ test = ["pytest (>=7.2)", "pytest-cov (>=4.0)"]
 
 [[package]]
 name = "numcodecs"
-version = "0.12.1"
+version = "0.13.0"
 description = "A Python package providing buffer compression and transformation codecs for use in data storage and communication applications."
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.10"
 files = [
-    {file = "numcodecs-0.12.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:d37f628fe92b3699e65831d5733feca74d2e33b50ef29118ffd41c13c677210e"},
-    {file = "numcodecs-0.12.1-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:941b7446b68cf79f089bcfe92edaa3b154533dcbcd82474f994b28f2eedb1c60"},
-    {file = "numcodecs-0.12.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0e79bf9d1d37199ac00a60ff3adb64757523291d19d03116832e600cac391c51"},
-    {file = "numcodecs-0.12.1-cp310-cp310-win_amd64.whl", hash = "sha256:82d7107f80f9307235cb7e74719292d101c7ea1e393fe628817f0d635b7384f5"},
-    {file = "numcodecs-0.12.1-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:eeaf42768910f1c6eebf6c1bb00160728e62c9343df9e2e315dc9fe12e3f6071"},
-    {file = "numcodecs-0.12.1-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:135b2d47563f7b9dc5ee6ce3d1b81b0f1397f69309e909f1a35bb0f7c553d45e"},
-    {file = "numcodecs-0.12.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a191a8e347ecd016e5c357f2bf41fbcb026f6ffe78fff50c77ab12e96701d155"},
-    {file = "numcodecs-0.12.1-cp311-cp311-win_amd64.whl", hash = "sha256:21d8267bd4313f4d16f5b6287731d4c8ebdab236038f29ad1b0e93c9b2ca64ee"},
-    {file = "numcodecs-0.12.1-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:2f84df6b8693206365a5b37c005bfa9d1be486122bde683a7b6446af4b75d862"},
-    {file = "numcodecs-0.12.1-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:760627780a8b6afdb7f942f2a0ddaf4e31d3d7eea1d8498cf0fd3204a33c4618"},
-    {file = "numcodecs-0.12.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c258bd1d3dfa75a9b708540d23b2da43d63607f9df76dfa0309a7597d1de3b73"},
-    {file = "numcodecs-0.12.1-cp312-cp312-win_amd64.whl", hash = "sha256:e04649ea504aff858dbe294631f098fbfd671baf58bfc04fc48d746554c05d67"},
-    {file = "numcodecs-0.12.1-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:caf1a1e6678aab9c1e29d2109b299f7a467bd4d4c34235b1f0e082167846b88f"},
-    {file = "numcodecs-0.12.1-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:c17687b1fd1fef68af616bc83f896035d24e40e04e91e7e6dae56379eb59fe33"},
-    {file = "numcodecs-0.12.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:29dfb195f835a55c4d490fb097aac8c1bcb96c54cf1b037d9218492c95e9d8c5"},
-    {file = "numcodecs-0.12.1-cp38-cp38-win_amd64.whl", hash = "sha256:2f1ba2f4af3fd3ba65b1bcffb717fe65efe101a50a91c368f79f3101dbb1e243"},
-    {file = "numcodecs-0.12.1-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:2fbb12a6a1abe95926f25c65e283762d63a9bf9e43c0de2c6a1a798347dfcb40"},
-    {file = "numcodecs-0.12.1-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:f2207871868b2464dc11c513965fd99b958a9d7cde2629be7b2dc84fdaab013b"},
-    {file = "numcodecs-0.12.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:abff3554a6892a89aacf7b642a044e4535499edf07aeae2f2e6e8fc08c9ba07f"},
-    {file = "numcodecs-0.12.1-cp39-cp39-win_amd64.whl", hash = "sha256:ef964d4860d3e6b38df0633caf3e51dc850a6293fd8e93240473642681d95136"},
-    {file = "numcodecs-0.12.1.tar.gz", hash = "sha256:05d91a433733e7eef268d7e80ec226a0232da244289614a8f3826901aec1098e"},
+    {file = "numcodecs-0.13.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:56e49f68ce6aeba29f144992524c8897d94f846d02bbcc820dd29d7c5c2a073e"},
+    {file = "numcodecs-0.13.0-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:17bc4b568214582f4c623700592f633f3afd920848630049c584fa1e535253ad"},
+    {file = "numcodecs-0.13.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:eed420a9c62d0a569aa94a387f93045f068ad3e7bbd787c6ce70bc5fefbaa7d9"},
+    {file = "numcodecs-0.13.0-cp310-cp310-win_amd64.whl", hash = "sha256:e7d3b9693df52eeaf978d2a56971d01cf9b4e284ae769ec764807f2087cce51d"},
+    {file = "numcodecs-0.13.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:f208a1b8b5e66c767ed043812ca74d9045e09b7b2e085d064a585c30b9efc8e7"},
+    {file = "numcodecs-0.13.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:a68368d3ce625ec76fcacd84785f6110d30a232909d5c6093a7aa25628880477"},
+    {file = "numcodecs-0.13.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f5904216811f2e9d312c23ffaad3b3d4c7442a3583d3a8bf81ca8319e9f5deb5"},
+    {file = "numcodecs-0.13.0-cp311-cp311-win_amd64.whl", hash = "sha256:208cab0f4d9cf4409e9c4a4c935e165833786614822c81dee9d865af372da9df"},
+    {file = "numcodecs-0.13.0-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:f3cf462d2357998d7f6baaa0427657b0eeda3eb79fba2b146d2d04542912a513"},
+    {file = "numcodecs-0.13.0-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:ac4dd5556fb126271e93bd1a02266e21b01d3617db448d70d00eec8e034506b4"},
+    {file = "numcodecs-0.13.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:820be89729583c91601a6b35c052008cdd2665b25bfedb91b367cc155fb34ba0"},
+    {file = "numcodecs-0.13.0-cp312-cp312-win_amd64.whl", hash = "sha256:d67a859dd8a7f026829e91cb1799c26720cc9d29ee4ae0060cc7a581670abc06"},
+    {file = "numcodecs-0.13.0.tar.gz", hash = "sha256:ba4fac7036ea5a078c7afe1d4dffeb9685080d42f19c9c16b12dad866703aa2e"},
 ]
 
 [package.dependencies]
 numpy = ">=1.7"
 
 [package.extras]
-docs = ["mock", "numpydoc", "sphinx (<7.0.0)", "sphinx-issues"]
+docs = ["mock", "numpydoc", "pydata-sphinx-theme", "sphinx (<7.0.0)", "sphinx-issues"]
 msgpack = ["msgpack"]
-test = ["coverage", "flake8", "pytest", "pytest-cov"]
+pcodec = ["pcodec (>=0.2.0)"]
+test = ["coverage", "pytest", "pytest-cov"]
 test-extras = ["importlib-metadata"]
-zfpy = ["zfpy (>=1.0.0)"]
+zfpy = ["numpy (<2.0.0)", "zfpy (>=1.0.0)"]
 
 [[package]]
 name = "numpy"
@@ -1875,7 +1868,7 @@ description = "Run preprocessing for the RT-CETSA pipeline."
 optional = false
 python-versions = ">=3.9,<3.12"
 files = []
-develop = false
+develop = true
 
 [package.dependencies]
 filepattern = "^2.0.5"
@@ -3208,4 +3201,4 @@ jupyter = ["ipytree (>=0.2.2)", "ipywidgets (>=8.0.0)", "notebook"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10, <3.12"
-content-hash = "74b88bf32c8542fbf91d81b8df23c3c2c28ca4332bf5bab65317cfd392ab9d1e"
+content-hash = "3b00bd96452051ed8fd42ff1b6d1521005baee7650c3246ac7b5a88af6c1f7a9"
