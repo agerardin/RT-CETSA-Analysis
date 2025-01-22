@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rt-cetsa"
-version = "0.2.0-dev0"
+version = "0.3.0-dev0"
 description = ""
 authors = [
     "Nick Schaub <nick.schaub@nih.gov>",
@@ -18,17 +18,25 @@ markdown = "^3.6"
 tifffile = "^2024.5.10"
 matplotlib = "^3.8.4"
 filepattern = "^2.0.6"
-# polus-images-segmentation-rt-cetsa-plate-extraction = {path = "/Users/antoinegerardin/Documents/projects/polus-plugins/segmentation/rt-cetsa-plate-extraction-tool"}
-polus-images-segmentation-rt-cetsa-plate-extraction = {git = "https://github.com/agerardin/image-tools.git", branch = "feat/rt_cetsa", subdirectory = "segmentation/rt-cetsa-plate-extraction-tool"}
 
-# polus-images-features-rt-cetsa-intensity-extraction = {path = "/Users/antoinegerardin/Documents/projects/polus-plugins/features/rt-cetsa-intensity-extraction-tool"}
-polus-images-features-rt-cetsa-intensity-extraction = {git = "https://github.com/agerardin/image-tools.git", branch = "feat/rt_cetsa", subdirectory = "features/rt-cetsa-intensity-extraction-tool"}
+# polus_tabular_transforms_rt_cetsa_metadata = {git = "https://github.com/agerardin/tabular-tools.git", branch = "feat/v0.4", subdirectory = "transforms/rt-cetsa-metadata-tool"}
+polus_tabular_transforms_rt_cetsa_metadata = {path = "/Users/antoinegerardin/Documents/projects/tabular-tools/transforms/rt-cetsa-metadata-tool", develop=true}
+# polus_tabular_transforms_rt_cetsa_metadata = {path = "/Users/antoinegerardin/Documents/projects/tabular-tools/transforms/rt-cetsa-metadata-tool", develop=true}
 
-#polus-tabular-regression-rt-cetsa-moltenprot = {path = "/Users/antoinegerardin/Documents/projects/tabular-tools/regression/rt-cetsa-moltenprot-tool"}
-polus-tabular-regression-rt-cetsa-moltenprot = {git = "https://github.com/agerardin/tabular-tools.git", branch = "feat/rt_cetsa_tools", subdirectory = "regression/rt-cetsa-moltenprot-tool"}
 
-#polus-tabular-regression-rt-cetsa-analysis = {path = "/Users/antoinegerardin/Documents/projects/tabular-tools/regression/rt-cetsa-analysis-tool"}
-polus-tabular-regression-rt-cetsa-analysis = {git = "https://github.com/agerardin/tabular-tools.git", branch = "feat/rt_cetsa_tools", subdirectory = "regression/rt-cetsa-analysis-tool"}
+polus-images-segmentation-rt-cetsa-plate-extraction = {path = "/Users/antoinegerardin/Documents/projects/polus-plugins/segmentation/rt-cetsa-plate-extraction-tool", develop=true}
+# polus-images-segmentation-rt-cetsa-plate-extraction = {path = "/Users/antoinegerardin/Documents/projects/polus-plugins/segmentation/rt-cetsa-plate-extraction-tool", develop=true}
+# polus-images-segmentation-rt-cetsa-plate-extraction = {git = "https://github.com/agerardin/image-tools.git", branch = "feat/rt_cetsa_new_data", subdirectory = "segmentation/rt-cetsa-plate-extraction-tool"}
+
+polus-images-features-rt-cetsa-intensity-extraction = {path = "/Users/antoinegerardin/Documents/projects/polus-plugins/features/rt-cetsa-intensity-extraction-tool", develop=true}
+# polus-images-features-rt-cetsa-intensity-extraction = {path = "/Users/antoinegerardin/Documents/projects/polus-plugins/features/rt-cetsa-intensity-extraction-tool", develop=true}
+# polus-images-features-rt-cetsa-intensity-extraction = {git = "https://github.com/agerardin/image-tools.git", branch = "feat/rt_cetsa_new_data", subdirectory = "features/rt-cetsa-intensity-extraction-tool"}
+
+# polus-tabular-regression-rt-cetsa-moltenprot = {path = "/Users/antoinegerardin/Documents/projects/tabular-tools/regression/rt-cetsa-moltenprot-tool", develop=true}
+polus-tabular-regression-rt-cetsa-moltenprot = {git = "https://github.com/agerardin/tabular-tools.git", branch = "feat/rt_cetsa_new_data", subdirectory = "regression/rt-cetsa-moltenprot-tool"}
+
+# polus-tabular-regression-rt-cetsa-analysis = {path = "/Users/antoinegerardin/Documents/projects/tabular-tools/regression/rt-cetsa-analysis-tool", develop=true}
+polus-tabular-regression-rt-cetsa-analysis = {git = "https://github.com/agerardin/tabular-tools.git", branch = "feat/rt_cetsa_new_data", subdirectory = "regression/rt-cetsa-analysis-tool"}
 
 [tool.poetry.group.dev.dependencies]
 bump2version = "^1.0.1"
