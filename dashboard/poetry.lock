@@ -1829,36 +1829,13 @@ test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=8.3.2)", "pytest-
 type = ["mypy (>=1.11.2)"]
 
 [[package]]
-name = "polus-images-features-rt-cetsa-intensity-extraction"
-version = "0.4.0-dev0"
-description = "Extract well intensities from RT-CETSA plate images."
-optional = false
-python-versions = ">=3.9,<3.12"
-files = []
-develop = true
-
-[package.dependencies]
-bfio = "^2.3.6"
-filepattern = "^2.0.5"
-imagecodecs = "^2024.1.1"
-numpy = "^1.26.4"
-pandas = "^2.2.2"
-polus-images-segmentation-rt-cetsa-plate-extraction = {path = "/Users/antoinegerardin/Documents/projects/polus-plugins/segmentation/rt-cetsa-plate-extraction-tool", develop = true}
-scikit-image = "^0.22.0"
-typer = "^0.7.0"
-
-[package.source]
-type = "directory"
-url = "../../Documents/projects/polus-plugins/features/rt-cetsa-intensity-extraction-tool"
-
-[[package]]
 name = "polus-images-segmentation-rt-cetsa-plate-extraction"
 version = "0.4.0-dev0"
 description = "Rotate and crop images of plates from RT-CETSA; then label the wells."
 optional = false
 python-versions = ">=3.9,<3.12"
 files = []
-develop = true
+develop = false
 
 [package.dependencies]
 bfio = "2.3.6"
@@ -1868,8 +1845,11 @@ scikit-image = "0.22.0"
 typer = "^0.7.0"
 
 [package.source]
-type = "directory"
-url = "../../Documents/projects/polus-plugins/segmentation/rt-cetsa-plate-extraction-tool"
+type = "git"
+url = "https://github.com/agerardin/image-tools.git"
+reference = "feat/v0.4"
+resolved_reference = "02c059ef5a858bb27e0b32bfe0832bcd8b4b540c"
+subdirectory = "segmentation/rt-cetsa-plate-extraction-tool"
 
 [[package]]
 name = "polus-tabular-regression-rt-cetsa-analysis"
@@ -1878,7 +1858,7 @@ description = "Run statiscal analysis for the RT-CETSA pipeline."
 optional = false
 python-versions = ">=3.9,<3.12"
 files = []
-develop = true
+develop = false
 
 [package.dependencies]
 numpy = "^1.26.4"
@@ -1887,8 +1867,11 @@ pandas = "^2.2.2"
 typer = "^0.7"
 
 [package.source]
-type = "directory"
-url = "../../Documents/projects/tabular-tools/regression/rt-cetsa-analysis-tool"
+type = "git"
+url = "https://github.com/agerardin/tabular-tools.git"
+reference = "feat/v0.4"
+resolved_reference = "73c16ae700fdd4894e1eb8f765ba3777c0b74159"
+subdirectory = "regression/rt-cetsa-analysis-tool"
 
 [[package]]
 name = "polus-tabular-regression-rt-cetsa-moltenprot"
@@ -1897,7 +1880,7 @@ description = "Run moltenprot for the RT-CETSA pipeline."
 optional = false
 python-versions = ">=3.9,<3.12"
 files = []
-develop = true
+develop = false
 
 [package.dependencies]
 filepattern = "^2.0.5"
@@ -1907,8 +1890,11 @@ scipy = "^1.13.0"
 typer = "^0.7.0"
 
 [package.source]
-type = "directory"
-url = "../../Documents/projects/tabular-tools/regression/rt-cetsa-moltenprot-tool"
+type = "git"
+url = "https://github.com/agerardin/tabular-tools.git"
+reference = "feat/v0.4"
+resolved_reference = "73c16ae700fdd4894e1eb8f765ba3777c0b74159"
+subdirectory = "regression/rt-cetsa-moltenprot-tool"
 
 [[package]]
 name = "polus-tabular-transforms-rt-cetsa-metadata"
@@ -1917,7 +1903,7 @@ description = "Run preprocessing for the RT-CETSA pipeline."
 optional = false
 python-versions = ">=3.9,<3.12"
 files = []
-develop = true
+develop = false
 
 [package.dependencies]
 filepattern = "^2.0.5"
@@ -1926,8 +1912,11 @@ pandas = "^2.2.2"
 typer = "^0.7.0"
 
 [package.source]
-type = "directory"
-url = "../../Documents/projects/tabular-tools/transforms/rt-cetsa-metadata-tool"
+type = "git"
+url = "https://github.com/agerardin/tabular-tools.git"
+reference = "feat/v0.4"
+resolved_reference = "73c16ae700fdd4894e1eb8f765ba3777c0b74159"
+subdirectory = "transforms/rt-cetsa-metadata-tool"
 
 [[package]]
 name = "prompt-toolkit"
@@ -3318,4 +3307,4 @@ jupyter = ["ipytree (>=0.2.2)", "ipywidgets (>=8.0.0)", "notebook"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10, <3.12"
-content-hash = "bdc478425b3fe4a4bc2389382d4bd1d749ae0e43973b0ddf96e317d0a6048826"
+content-hash = "8b6937db7bc678f44a7045d353e6f6ae3b94bc452b2e37451a7d03f83d4d7ed7"
