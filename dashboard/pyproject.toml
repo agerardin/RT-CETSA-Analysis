@@ -32,11 +32,11 @@ polus-images-features-rt-cetsa-intensity-extraction = {path = "/Users/antoineger
 # polus-images-features-rt-cetsa-intensity-extraction = {path = "/Users/antoinegerardin/Documents/projects/polus-plugins/features/rt-cetsa-intensity-extraction-tool", develop=true}
 # polus-images-features-rt-cetsa-intensity-extraction = {git = "https://github.com/agerardin/image-tools.git", branch = "feat/rt_cetsa_new_data", subdirectory = "features/rt-cetsa-intensity-extraction-tool"}
 
-# polus-tabular-regression-rt-cetsa-moltenprot = {path = "/Users/antoinegerardin/Documents/projects/tabular-tools/regression/rt-cetsa-moltenprot-tool", develop=true}
-polus-tabular-regression-rt-cetsa-moltenprot = {git = "https://github.com/agerardin/tabular-tools.git", branch = "feat/rt_cetsa_new_data", subdirectory = "regression/rt-cetsa-moltenprot-tool"}
+polus-tabular-regression-rt-cetsa-moltenprot = {path = "/Users/antoinegerardin/Documents/projects/tabular-tools/regression/rt-cetsa-moltenprot-tool", develop=true}
+# polus-tabular-regression-rt-cetsa-moltenprot = {git = "https://github.com/agerardin/tabular-tools.git", branch = "feat/rt_cetsa_new_data", subdirectory = "regression/rt-cetsa-moltenprot-tool"}
 
-# polus-tabular-regression-rt-cetsa-analysis = {path = "/Users/antoinegerardin/Documents/projects/tabular-tools/regression/rt-cetsa-analysis-tool", develop=true}
-polus-tabular-regression-rt-cetsa-analysis = {git = "https://github.com/agerardin/tabular-tools.git", branch = "feat/rt_cetsa_new_data", subdirectory = "regression/rt-cetsa-analysis-tool"}
+polus-tabular-regression-rt-cetsa-analysis = {path = "/Users/antoinegerardin/Documents/projects/tabular-tools/regression/rt-cetsa-analysis-tool", develop=true}
+#polus-tabular-regression-rt-cetsa-analysis = {git = "https://github.com/agerardin/tabular-tools.git", branch = "feat/rt_cetsa_new_data", subdirectory = "regression/rt-cetsa-analysis-tool"}
 
 [tool.poetry.group.dev.dependencies]
 bump2version = "^1.0.1"
