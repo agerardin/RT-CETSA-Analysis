@@ -1,0 +1,19 @@
+name: rtcetsa-nbhub
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - r-base
+  - python>=3.10,<3.12
+  - pip
+  - pip:
+      - solara==1.32.2
+      - numpy==1.26.4
+      - markdown==3.6
+      - tifffile==2024.5.10
+      - matplotlib==3.8.4
+      - filepattern==2.0.6
+      - git+https://github.com/agerardin/tabular-tools.git@feat/v0.4#subdirectory=transforms/rt-cetsa-metadata-tool
+      - git+https://github.com/agerardin/tabular-tools.git@feat/v0.4#subdirectory=regression/rt-cetsa-moltenprot-tool
+      - git+https://github.com/agerardin/tabular-tools.git@feat/v0.4#subdirectory=regression/rt-cetsa-analysis-tool
+      - git+https://github.com/agerardin/image-tools.git@feat/v0.4#subdirectory=features/rt-cetsa-intensity-extraction-tool

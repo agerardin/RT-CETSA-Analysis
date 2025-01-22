@@ -31,18 +31,21 @@ or through [poetry](https://python-poetry.org/docs/#installing-with-the-official
 
 ### Prerequisites
 
+
 R needs to be available on the system in order to run the statistical analysis.
 
-R and its dependencies can be installed beforehand this way :
+For osx, some R packages (`r-mess` and `r-hrbrthemes`) are not available on osx, so packages will need to be installed  directly with R.
+
+On linux we can install all dependencies with conda.
+On dump of the last working version of all dependencies has been created in `env-linux-dump.yml`
+The environmnent can be recreated with this command :
 
 `conda env create -f environment.yml`
 
-Unfortunately, it seems that `r-mess` and `r-hrbrthemes` are not available
-on conda-forge (at least for osx-arm64).
 
 ### Data
 
-A specific `data` folder can be provided where all uploaded data and generated output will be stored.
+A specific `data` folder can be provided where all uploaded data and generated output will be stored. Other solara options can be passed by environment variables.
 
-```DATA_DIR=path/to/data solara run src/rt_cetsa/dashboard.py```
+```DATA_DIR=path/to/data HOST=host PORT=port solara run src/rt_cetsa/dashboard.py```
 
